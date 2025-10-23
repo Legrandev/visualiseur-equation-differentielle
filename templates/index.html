@@ -69,11 +69,11 @@
     </style>
 </head>
 <body>
-    <h1>🔬 Visualisateur d'Équations Différentielles</h1>
+    <h1>Visualisateur d'Équations Différentielles</h1>
     
     <div class="container">
         <div class="controls">
-            <h3>📊 Paramètres de l'équation</h3>
+            <h3>Paramètres de l'équation</h3>
             <p><strong>Équation :</strong> dy/dt = k × y</p>
             
             <label>Condition initiale y(0):</label>
@@ -91,10 +91,10 @@
             <label>Nombre de points:</label>
             <input type="number" id="n_points" value="100" min="10" max="1000">
             
-            <button onclick="solve()">🚀 Résoudre l'équation</button>
+            <button onclick="solve()"> Résoudre l'équation</button>
             
             <div class="example">
-                <strong>💡 Exemples à tester :</strong><br>
+                <strong> Exemples à tester :</strong><br>
                 • Croissance: k=1, y0=1<br>
                 • Décroissance: k=-0.5, y0=2<br>
                 • Croissance rapide: k=2, y0=0.5
@@ -102,7 +102,7 @@
         </div>
         
         <div class="result">
-            <h3>📈 Résultats</h3>
+            <h3>Résultats</h3>
             <div id="plot">
                 <p>Cliquez sur "Résoudre" pour voir le graphique</p>
             </div>
@@ -157,4 +157,5 @@
         window.onload = solve;
     </script>
 </body>
+
 </html>
