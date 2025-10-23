@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualisateur d'Équations Différentielles</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container { 
+            display: grid; 
+            grid-template-columns: 300px 1fr; 
+            gap: 30px; 
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .controls { 
+            background: #f8f9fa; 
+            padding: 25px; 
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .result { 
+            text-align: center; 
+            padding: 20px;
+        }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        h3 { color: #007bff; margin-top: 0; }
+        label { 
+            display: block; 
+            margin: 15px 0 5px 0; 
+            font-weight: bold;
+            color: #555;
+        }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 5px 0 15px 0; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover { background: #0056b3; }
+        #plot { margin-top: 20px; }
+        #error { color: red; margin-top: 10px; }
+        .example { 
+            background: #e7f3ff; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔬 Visualisateur d'Équations Différentielles</h1>
+    
+    <div class="container">
+        <div class="controls">
+            <h3>📊 Paramètres de l'équation</h3>
+            <p><strong>Équation :</strong> dy/dt = k × y</p>
+            
+            <label>Condition initiale y(0):</label>
+            <input type="number" id="y0" value="1" step="0.1">
+            
+            <label>Coefficient k:</label>
+            <input type="number" id="k" value="1" step="0.1">
+            
+            <label>Temps initial t₀:</label>
+            <input type="number" id="t0" value="0" step="0.1">
+            
+            <label>Temps final t_f:</label>
+            <input type="number" id="tf" value="5" step="0.1">
+            
+            <label>Nombre de points:</label>
+            <input type="number" id="n_points" value="100" min="10" max="1000">
+            
+            <button onclick="solve()">🚀 Résoudre l'équation</button>
+            
+            <div class="example">
+                <strong>💡 Exemples à tester :</strong><br>
+                • Croissance: k=1, y0=1<br>
+                • Décroissance: k=-0.5, y0=2<br>
+                • Croissance rapide: k=2, y0=0.5
+            </div>
+        </div>
+        
+        <div class="result">
+            <h3>📈 Résultats</h3>
+            <div id="plot">
+                <p>Cliquez sur "Résoudre" pour voir le graphique</p>
+            </div>
+            <div id="error"></div>
+        </div>
+    </div>
+
+    <script>
+        function solve() {
+            const params = {
+                y0: parseFloat(document.getElementById('y0').value),
+                k: parseFloat(document.getElementById('k').value),
+                t0: parseFloat(document.getElementById('t0').value),
+                tf: parseFloat(document.getElementById('tf').value),
+                n_points: parseInt(document.getElementById('n_points').value)
+            };
+            
+            // Reset error message
+            document.getElementById('error').innerHTML = '';
+            
+            console.log('Envoi des paramètres:', params); // Debug
+            
+            fetch('/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(params)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Réponse reçue:', data); // Debug
+                if (data.status === 'success') {
+                    document.getElementById('plot').innerHTML = 
+                        `<img src="${data.plot_url}" alt="Graphique de solution" style="max-width: 100%; border: 1px solid #ddd; border-radius: 5px;">`;
+                } else {
+                    document.getElementById('error').innerHTML = 'Erreur: ' + data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                document.getElementById('error').innerHTML = 'Erreur: ' + error.message;
+            });
+        }
+        
+        // Résoudre automatiquement au chargement
+        window.onload = solve;
+    </script>
+</body>
+</html>
